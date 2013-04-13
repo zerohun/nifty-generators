@@ -1,3 +1,3 @@
   def new
-    @<%= instance_name %> = <%= class_name %>.new
+    @<%= instance_name %> = <%= relation_name %>.new
   end

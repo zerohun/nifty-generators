@@ -33,12 +33,16 @@ module Nifty
         @skip_model = options.skip_model?
         @namespace_model = options.namespace_model?
         @invert_actions = options.invert?
+        @nesting_resource = nil
 
         args_for_c_m.each do |arg|
           if arg == '!'
             @invert_actions = true
+          elsif arg.include?('::nesting')
+            @nesting_resource = arg.sub("::nesting","")
           elsif arg.include?(':')
             @model_attributes << Rails::Generators::GeneratedAttribute.new(*arg.split(':'))
+
           else
             @controller_actions << arg
             @controller_actions << 'create' if arg == 'new'
@@ -158,6 +162,19 @@ module Nifty
         end
       end
 
+      def relation_name
+        if @namespace_model
+          result = scaffold_name.camelize
+        else
+          result = scaffold_name.split('::').last.camelize
+          if @nesting_resource.present?
+            result = "@#{@nesting_resource}.#{class_name.underscore.pluralize}"
+          end
+        end
+        return result
+      end
+      
+
       def model_path
         class_name.underscore
       end
@@ -197,7 +214,16 @@ module Nifty
       end
 
       def item_resource
-        scaffold_name.underscore.gsub('/','_')
+        if nesting_resource.present?
+          name_list = scaffold_name.underscore.split('/')
+          if name_list.count > 1
+            return "#{name_list.first}_#{nesting_resource}_#{name_list.last.underscore}"
+          else
+            return "#{nesting_resource}_#{scaffold_name.underscore}"
+          end
+        else
+          scaffold_name.underscore.gsub('/','_')
+        end
       end
 
       def items_path
@@ -218,7 +244,8 @@ module Nifty
         else
           if scaffold_name.include?('::') && !@namespace_model
             namespace = singular_name.split('/')[0..-2]
-            "[:#{namespace.join(', :')}, #{name}]"
+            "[:#{namespace.join(', :')}, #{ "@#{nesting_resource}, " if nesting_resource.present?}#{name}]"
+            
           else
             name
           end
@@ -302,6 +329,10 @@ module Nifty
 
       def destination_path(path)
         File.join(destination_root, path)
+      end
+
+      def nesting_resource
+        @nesting_resource
       end
 
       # FIXME: Should be proxied to ActiveRecord::Generators::Base

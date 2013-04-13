@@ -1,7 +1,7 @@
 class <%= plural_class_name %>Controller < ApplicationController
   <%= controller_methods :actions %>
   private
-  def <%= singular_name %>_params
-    params.require(:<%= class_name %>).permit(<%= model_attributes.map { |a| ":#{a.name}" }.join(", ") %>)
+  def <%= class_name.underscore %>_params
+    params.require(:<%= class_name.underscore %>).permit(<%= model_attributes.map { |a| ":#{a.name}" }.join(", ") %>)
   end
 end

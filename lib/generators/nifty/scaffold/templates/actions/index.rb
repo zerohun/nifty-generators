@@ -1,3 +1,3 @@
   def index
-    @<%= instances_name %> = <%= class_name %>.all
+    @<%= instances_name %> = <%= relation_name %>.all
   end
