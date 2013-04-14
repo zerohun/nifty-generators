@@ -4,7 +4,7 @@ require 'rails/generators/generated_attribute'
 
 module Nifty
   module Generators
-    class ScaffoldGenerator < Base
+    class JsonScaffoldGenerator < Base
       include Rails::Generators::Migration
       no_tasks { attr_accessor :scaffold_name, :model_attributes, :controller_actions }
 
@@ -99,14 +99,14 @@ module Nifty
           template 'helper.rb', "app/helpers/#{plural_name}_helper.rb"
 
           controller_actions.each do |action|
-            if %w[index show new edit].include?(action) # Actions with templates
-              template "views/#{view_language}/#{action}.html.#{view_language}", "app/views/#{plural_name}/#{action}.html.#{view_language}"
+            if %w[index create show update].include?(action) # Actions with templates
+              template "views/#{view_language}/#{action}.json.#{view_language}", "app/views/#{plural_name}/#{action}.json.#{view_language}"
             end
           end
 
-          if form_partial?
-            template "views/#{view_language}/_form.html.#{view_language}", "app/views/#{plural_name}/_form.html.#{view_language}"
-          end
+          #if form_partial?
+            #template "views/#{view_language}/_form.html.#{view_language}", "app/views/#{plural_name}/_form.html.#{view_language}"
+          #end
 
           namespaces = plural_name.split('/')
           resource = namespaces.pop
@@ -129,7 +129,7 @@ module Nifty
       end
 
       def all_actions
-        %w[index show new create edit update destroy]
+        %w[index show create update destroy]
       end
 
       def action?(name)
@@ -201,17 +201,17 @@ module Nifty
         end.join("\n").strip
       end
 
-      def render_form
-        if form_partial?
-          if options.haml?
-            "= render \"form\""
-          else
-            "<%= render \"form\" %>"
-          end
-        else
-          read_template("views/#{view_language}/_form.html.#{view_language}")
-        end
-      end
+      #def render_form
+        #if form_partial?
+          #if options.haml?
+            #"= render \"form\""
+          #else
+            #"<%= render \"form\" %>"
+          #end
+        #else
+          #read_template("views/#{view_language}/_form.html.#{view_language}")
+        #end
+      #end
 
       def item_resource
         if nesting_resource.present?
@@ -238,9 +238,9 @@ module Nifty
         name = options[:instance_variable] ? "@#{instance_name}" : instance_name
         suffix = options[:full_url] ? "url" : "path"
         if options[:action].to_s == "new"
-          "new_#{item_resource}_#{suffix}(@#{nesting_resource})"
+          "new_#{item_resource}_#{suffix}"
         elsif options[:action].to_s == "edit"
-          "edit_#{item_resource}_#{suffix}(@#{nesting_resource}, #{name})"
+          "edit_#{item_resource}_#{suffix}(#{name})"
         else
           if scaffold_name.include?('::') && !@namespace_model
             namespace = singular_name.split('/')[0..-2]
@@ -299,7 +299,7 @@ module Nifty
       end
 
       def view_language
-        options.haml? ? 'haml' : 'erb'
+        'jbuilder'
       end
 
       def test_framework
