@@ -13,10 +13,10 @@
     </tr>
   </thead>
   <tbody>
-  <%% @<%= instances_name %>.each do |<%= instances_name %>| %>
+  <%% @<%= instances_name %>.each do |<%= instance_name %>| %>
     <tr>
       <%- for attribute in model_attributes -%>
-      <td><%%= <%= instance_name %>.<%= attribute.name %> %>></td>
+      <td><%%= <%= instance_name %>.<%= attribute.name %> %></td>
       <%- end -%>
       <td>
         <div class="btn-group">
