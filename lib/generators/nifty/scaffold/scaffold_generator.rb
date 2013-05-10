@@ -245,7 +245,6 @@ module Nifty
           if scaffold_name.include?('::') && !@namespace_model
             namespace = singular_name.split('/')[0..-2]
             "[:#{namespace.join(', :')}, #{ "@#{nesting_resource}, " if nesting_resource.present?}#{name}]"
-            
           else
             name
           end
