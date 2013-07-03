@@ -21,13 +21,13 @@
       <td>
         <div class="btn-group">
           <%- if action? :show -%>
-            <%%= link_to '조회', <%= item_path %>, :class => "btn" %>
+            <%%= link_to 'Show', <%= item_path %>, :class => "btn" %>
           <%- end -%>
           <%- if action? :edit -%>
-            <%%= link_to "수정", <%= item_path :action => :edit %>, :class => "btn btn-warning" %>
+            <%%= link_to "Edit", <%= item_path :action => :edit %>, :class => "btn btn-warning" %>
           <%- end -%>
           <%- if action? :destroy -%>
-            <%%= link_to "삭제", <%= item_path %>, :confirm => "정말 삭제 하시겠습니까?", :method => :delete, :class => "btn btn-danger" %>
+            <%%= link_to "Delete", <%= item_path %>, :confirm => "Do you really want to delete this item?", :method => :delete, :class => "btn btn-danger" %>
           <%- end -%>
         </div>
       </td>
